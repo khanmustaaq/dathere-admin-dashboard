@@ -109,5 +109,3 @@ docker restart YOUR_CKAN_CONTAINER
 - Currently uses single API key (multi-user auth coming soon)
 
 ---
-
-**Questions?** Contact: dev@dathere.com
