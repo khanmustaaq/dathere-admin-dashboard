@@ -99,7 +99,6 @@ docker restart YOUR_CKAN_CONTAINER
 - PortalJS integration
 
  **In Progress:**
-- Resource upload fix (CKAN direct upload)
 - OAuth authentication (Google/GitHub/LinkedIn)
 - User management
 
