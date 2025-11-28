@@ -1,26 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const CKAN_URL = 'http://localhost:5050/api/3/action';
-const CKAN_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJqNzNzZkI0MEdWNm5LWTV4dUFBa2RmdzJXNkY4aDM3bFNYU3BiUi1GRXpJIiwiaWF0IjoxNzYzMzY4MjU5fQ.RK9MGnOeh-IloTd8AN4LAO4M_uuCzspyckPx3lo7vak'
+const CKAN_URL = `${process.env.CKAN_API_URL}/api/3/action`;
+const CKAN_API_KEY = process.env.CKAN_API_KEY || '';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ action: string[] }> }  // Changed this
+  { params }: { params: Promise<{ action: string[] }> }
 ) {
   try {
-    const { action: actionArray } = await params;  // Await params
+    const { action: actionArray } = await params;
     const action = actionArray.join('/');
-    const body = await request.json();
+    
+    const contentType = request.headers.get('content-type');
+    
+    let body;
+    let headers: HeadersInit = {
+      'Authorization': CKAN_API_KEY,
+    };
+
+    // Handle FormData (file uploads)
+    if (contentType?.includes('multipart/form-data')) {
+      body = await request.formData();
+      // Don't set Content-Type for FormData - browser sets it with boundary
+    } else {
+      // Handle JSON
+      body = JSON.stringify(await request.json());
+      headers['Content-Type'] = 'application/json';
+    }
 
     console.log('Proxying to CKAN:', `${CKAN_URL}/${action}`);
 
     const response = await fetch(`${CKAN_URL}/${action}`, {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': CKAN_API_KEY,
-      },
-      body: JSON.stringify(body),
+      headers,
+      body,
     });
 
     const text = await response.text();

@@ -70,28 +70,30 @@ export async function createResource(resource: Resource): Promise<CKANResponse<a
 }
 
 /**
- * Upload a file and return its URL
- * This will need to be implemented based on your storage solution (R2, S3, local, etc.)
+ * Upload a file directly to CKAN and create a resource
+ * This uploads to CKAN's FileStore and returns the resource with proper URL
  */
-export async function uploadFile(file: File): Promise<string> {
-  // TODO: Implement file upload to your storage
-  // For now, returning a placeholder
+export async function uploadFileToCKAN(
+  file: File, 
+  packageId: string
+): Promise<CKANResponse<any>> {
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('package_id', packageId);
+  formData.append('upload', file);
+  formData.append('name', file.name);
+  formData.append('format', file.name.split('.').pop()?.toUpperCase() || '');
 
-  const response = await fetch('/api/upload', {
+  const response = await fetch(`${CKAN_API_URL}/resource_create`, {
     method: 'POST',
-    body: formData,
+    body: formData, // Send as multipart/form-data (no Content-Type header needed)
   });
 
   if (!response.ok) {
-    throw new Error('File upload failed');
+    throw new Error('File upload to CKAN failed');
   }
 
-  const data = await response.json();
-  return data.url;
+  return response.json();
 }
-
 /**
  * Get list of organizations
  */

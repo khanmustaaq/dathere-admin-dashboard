@@ -19,13 +19,13 @@ export default function Sidebar() {
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
       <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-50 dark:bg-[#0a0f1e] px-6 border-r border-gray-200 dark:border-gray-800">
         {/* Logo */}
-        <div className="flex items-center gap-3 mb-8">
+        <Link href="/dashboard" className="flex items-center gap-3 mb-8 cursor-pointer hover:opacity-80 transition-opacity">
           <img 
             src="/dathere-dark-logo.png" 
             alt="datHere" 
             className="h-8 w-auto"
           />
-        </div>
+        </Link>
 
         {/* Navigation */}
         <nav className="flex flex-1 flex-col">
