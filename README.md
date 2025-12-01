@@ -23,6 +23,7 @@ NEXT_PUBLIC_CKAN_URL=http://localhost:5050   # CKAN public URL
 CKAN_API_KEY=your-api-key-here               # Get from CKAN user profile
 NEXT_PUBLIC_PORTALJS_URL=http://localhost:3001  # PortalJS portal URL
 NEXT_PUBLIC_APP_URL=http://localhost:3002    # Dashboard URL
+PORTALJS_STORIES_PATH=/path/to/portaljs/content/stories  # Local dev: path to PortalJS stories folder
 ```
 
 ```bash
@@ -99,12 +100,11 @@ docker restart YOUR_CKAN_CONTAINER
 - PortalJS integration
 
  **In Progress:**
+- Visual chart builder with CKAN data integration
 - OAuth authentication (Google/GitHub/LinkedIn)
 - User management
 
 ##  Known Issues
-
-- Resource files must be uploaded to CKAN (not local storage) - fix in progress
+- Resource files must be uploaded to CKAN FileStore (not local storage)
 - Currently uses single API key (multi-user auth coming soon)
-
 ---
