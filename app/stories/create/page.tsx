@@ -8,6 +8,7 @@ import Sidebar from '@/components/Sidebar';
 import ReactMarkdown from 'react-markdown';
 import { evaluate } from '@mdx-js/mdx';
 import * as runtime from 'react/jsx-runtime';
+import DataChartModal from '@/components/modals/DataChartModal';
 
 // Import all chart components for preview (they're all exported from the charts index)
 import dynamic from 'next/dynamic';
@@ -248,6 +249,9 @@ export default function CreateStory() {
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [isCompiling, setIsCompiling] = useState(false);
 
+  // Data chart modal state
+  const [isDataModalOpen, setIsDataModalOpen] = useState(false);
+
   // Ref for the content textarea
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -284,6 +288,32 @@ export default function CreateStory() {
         textarea.setSelectionRange(newCursorPos, newCursorPos);
       }, 0);
     }
+  };
+
+  // Handle inserting chart from data modal
+  const handleInsertDataChart = (chartCode: string) => {
+    const textarea = contentTextareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const insertText = '\n\n' + chartCode + '\n\n';
+
+    textarea.focus();
+
+    if (document.queryCommandSupported('insertText')) {
+      document.execCommand('insertText', false, insertText);
+    } else {
+      const newText = content.substring(0, start) + insertText + content.substring(start);
+      setContent(newText);
+      
+      setTimeout(() => {
+        textarea.focus();
+        const newCursorPos = start + insertText.length;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+      }, 0);
+    }
+
+    setIsDataModalOpen(false);
   };
 
   // Handle Enter key for auto-continuing lists
@@ -382,6 +412,23 @@ export default function CreateStory() {
             HorizontalBarChart,
             FunnelChartComponent,
             TreemapChart,
+            // DataFetchChart placeholder (doesn't work in preview)
+            DataFetchChart: ({ dataUrl, chartType, xKey, yKey }: any) => (
+              <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-6 my-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  <h4 className="text-blue-200 font-medium">Data Chart (Live on Portal)</h4>
+                </div>
+                <p className="text-sm text-blue-300 mb-2">
+                  <strong>Type:</strong> {chartType} • <strong>X:</strong> {xKey} • <strong>Y:</strong> {yKey}
+                </p>
+                <p className="text-xs text-blue-400">
+                  ℹ️ This chart will fetch and render data when published on the portal
+                </p>
+              </div>
+            ),
             // Markdown elements with styling
             h1: (props: any) => <h1 className="text-4xl font-bold mb-4 mt-6" {...props} />,
             h2: (props: any) => <h2 className="text-3xl font-bold mb-3 mt-5" {...props} />,
@@ -719,6 +766,15 @@ export default function CreateStory() {
                           >
                             Code Block
                           </button>
+                          <div className="w-px h-6 bg-gray-600"></div>
+                          <button
+                            onClick={() => setIsDataModalOpen(true)}
+                            className="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded text-sm font-medium"
+                            title="Insert Data Chart"
+                            type="button"
+                          >
+                            📊 Insert Data Chart
+                          </button>
                         </div>
 
                         <textarea
@@ -832,6 +888,13 @@ export default function CreateStory() {
           </div>
         </main>
       </div>
+
+      {/* Data Chart Modal */}
+      <DataChartModal
+        isOpen={isDataModalOpen}
+        onClose={() => setIsDataModalOpen(false)}
+        onInsertChart={handleInsertDataChart}
+      />
     </div>
   );
 }
