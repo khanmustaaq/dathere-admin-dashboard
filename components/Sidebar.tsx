@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { LogOut, User as UserIcon } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import { Sparkles } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard' },

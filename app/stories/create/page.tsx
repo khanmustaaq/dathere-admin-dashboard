@@ -9,6 +9,7 @@ import ReactMarkdown from 'react-markdown';
 import { evaluate } from '@mdx-js/mdx';
 import * as runtime from 'react/jsx-runtime';
 import DataChartModal from '@/components/modals/DataChartModal';
+import { LiveMDXPreview } from '@/components/LiveMDXPreview';
 
 // Import all chart components for preview (they're all exported from the charts index)
 import dynamic from 'next/dynamic';
@@ -807,27 +808,17 @@ export default function CreateStory() {
                         </p>
                       </>
                     ) : (
+
+
+
                       <div className="prose dark:prose-invert max-w-none min-h-[500px] p-4 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                        {isCompiling ? (
-                          <div className="flex items-center justify-center py-12">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                            <span className="ml-3 text-gray-400">Compiling preview...</span>
-                          </div>
-                        ) : previewError ? (
-                          <div className="bg-red-900/20 border border-red-800 rounded-lg p-4">
-                            <h3 className="text-red-200 font-medium mb-2">Preview Error</h3>
-                            <pre className="text-red-300 text-sm whitespace-pre-wrap">{previewError}</pre>
-                          </div>
-                        ) : MdxContent ? (
-                          <div className="mdx-preview">
-                            <MdxContent />
-                          </div>
-                        ) : (
-                          <div className="text-gray-400 text-center py-12">
-                            Switch to preview to see your content rendered
-                          </div>
-                        )}
+                        <LiveMDXPreview content={content} />
                       </div>
+
+
+
+
+
                     )}
                   </div>
                 </div>
